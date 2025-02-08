@@ -26,7 +26,9 @@ class Article(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        super(Article, self).save(*args, **kwargs)
+            while Article.objects.filter(slug=self.slug).exists():
+                self.slug += "-1"
+        super().save(*args, **kwargs)
 
     def get_detail_url(self):
         return reverse('articles:detail', args=[
@@ -49,3 +51,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
